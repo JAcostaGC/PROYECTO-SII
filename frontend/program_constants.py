@@ -16,6 +16,7 @@ class ProgramConstants:
 
     AZUL_MARINO = '#1B396A'
     BLANCO = '#FAFAFA'
+    BLANCO_BLANCO = "#FFFFFF"
     GRIS_CLARO = '#E6E6E6'
     GRIS_OSCURO = '#707070'
     GRIS_CEMENTO = '#ECECEC'

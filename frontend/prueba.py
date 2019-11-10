@@ -1,28 +1,28 @@
 import Tkinter as tk
-from ctypes import windll
 
-GWL_EXSTYLE=-20
-WS_EX_APPWINDOW=0x00040000
-WS_EX_TOOLWINDOW=0x00000080
+class window2:
+    def __init__(self, master1):
+        self.panel2 = tk.Frame(master1)
+        self.panel2.grid()
+        self.button2 = tk.Button(self.panel2, text = "Quit", command = self.panel2.quit)
+        self.button2.grid()
+        vcmd = (master1.register(self.validate),
+                '%d', '%i', '%P', '%s', '%S', '%v', '%V', '%W')
+        self.text1 = tk.Entry(self.panel2, validate = 'key', validatecommand = vcmd)
+        self.text1.grid()
+        self.text1.focus()
 
-def set_appwindow(root):
-    hwnd = windll.user32.GetParent(root.winfo_id())
-    style = windll.user32.GetWindowLongW(hwnd, GWL_EXSTYLE)
-    style = style & ~WS_EX_TOOLWINDOW
-    style = style | WS_EX_APPWINDOW
-    res = windll.user32.SetWindowLongW(hwnd, GWL_EXSTYLE, style)
-    # re-assert the new window style
-    root.wm_withdraw()
-    root.after(10, lambda: root.wm_deiconify())
+    def validate(self, action, index, value_if_allowed,
+                       prior_value, text, validation_type, trigger_type, widget_name):
+        if value_if_allowed:
+            try:
+                float(value_if_allowed)
+                return True
+            except ValueError:
+                return False
+        else:
+            return False
 
-def main():
-    root = tk.Tk()
-    root.wm_title("AppWindow Test")
-    button = tk.Button(root, text='Exit', command=lambda: root.destroy())
-    button.place(x=10,y=10)
-    root.overrideredirect(True)
-    root.after(10, lambda: set_appwindow(root))
-    root.mainloop()
-
-if __name__ == '__main__':
-    main()
+root1 = tk.Tk()
+window2(root1)
+root1.mainloop()
