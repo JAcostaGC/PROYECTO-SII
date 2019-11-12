@@ -1,6 +1,5 @@
 # coding: utf-8
-from ..root import *
-from Tkinter import *
+from main import *
 
 
 class Cuadro_Sesion:
@@ -155,6 +154,8 @@ class Cuadro_Sesion:
         global entrada_usuario
         entrada_usuario = StringVar()
         vcmd = ventana.register(self.validate)
+        global tipo_usuario
+        tipo_usuario = tipouser
         usuario = Entry(ventana, textvariable=entrada_usuario, validate='all',
                         validatecommand=(vcmd, "%S"))
         entrada_usuario.set(tipouser)
@@ -202,7 +203,10 @@ class Cuadro_Sesion:
         )
 
     def validate(self, char):
-        return char in "0123456789"
+        if tipo_usuario == "No. Control:":
+            return char in "0123456789"
+        else:
+            pass
 
     def __on_click_user__(self, e):
         if entrada_usuario.get() == "No. Control:" or entrada_usuario.get() == "Usuario:":
@@ -255,3 +259,10 @@ class Cuadro_Sesion:
         # de la VENTANA.
         canvas.create_image(0, 0, anchor=NW, image=boton_imagen)
         canvas.place(x=633, y=495)
+
+        # VALIDACIÓN EN LA BASE DE DATOS
+        # canvas.bind("<Button-1>", lambda v: )
+
+        # CÓDIGO TEMPORAL
+        # Te deja entrar no importa lo que ingreses.
+

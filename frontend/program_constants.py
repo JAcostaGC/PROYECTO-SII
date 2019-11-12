@@ -1,5 +1,4 @@
 # coding: utf-8
-from tkFont import *
 
 
 class ProgramConstants:
