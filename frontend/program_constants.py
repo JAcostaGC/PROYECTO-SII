@@ -23,14 +23,14 @@ class ProgramConstants:
     ROJO = '#CF4949'
     BLANCO_CREMA = '#EBE8E8'
 
-    FUENTE_NEGRITAS_21 = ("Roboto", 21, "bold")
-    FUENTE_NEGRITAS_16 = ("Roboto", 16, "bold")
-    FUENTE_REGULAR_16 = ("Roboto", 16)
-    FUENTE_ERROR_14 = ("Roboto", 14)
-    FUENTE_NEGRITAS_18 = ("Roboto", 18, "bold")
-    FUENTE_REGULAR_14 = ("Roboto", 14)
-    FUENTE_NEGRITAS_11 = ("Roboto", 11, "bold")
-    FUENTE_NEGRITAS_14 = ("Roboto", 14, "bold")
+    FUENTE_NEGRITAS_21 = ("Arial", 21, "bold")
+    FUENTE_NEGRITAS_16 = ("Arial", 16, "bold")
+    FUENTE_REGULAR_16 = ("Arial", 16)
+    FUENTE_ERROR_14 = ("Arial", 14)
+    FUENTE_NEGRITAS_18 = ("Arial", 18, "bold")
+    FUENTE_REGULAR_14 = ("Arial", 14)
+    FUENTE_NEGRITAS_11 = ("Arial", 11, "bold")
+    FUENTE_NEGRITAS_14 = ("Arial", 14, "bold")
 
     TAMANO_PANTALLA = "1366x700+0+0"
 

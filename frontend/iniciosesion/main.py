@@ -21,10 +21,10 @@ class Main(tk.Frame):
         self.__imagen_tecnm()
         self.__label_sii()
         self._escudo()
-        self.__cuadro_sesion()
+        self.__cuadro_sesion(controller)
         # self._radio_buttons()
-        self._cajas_texto_("No. Control:")
-        self.boton_sesion()
+        self._cajas_texto_(controller, "No. Control:")
+        # self.boton_sesion(controller)
         self._cuadro_registro()
         self.__texto__(controller)
 
@@ -72,7 +72,7 @@ class Main(tk.Frame):
         canvas.create_image(0, 0, anchor='nw', image=itm)
         canvas.place(x=213, y=166)
 
-    def __cuadro_sesion(self):
+    def __cuadro_sesion(self, controller):
         """
         Se crea un rectangulo como una imagen.
         :return: Un rectangulo donde se conjugan las herramientas necesarioas para iniciar sesión
@@ -96,9 +96,9 @@ class Main(tk.Frame):
 
         # RadioButton (soy alumno/soy profesor)
         soy_alumno = tk.StringVar()
-        self._radio_buttons(soy_alumno)
+        self._radio_buttons(controller, soy_alumno)
 
-    def _radio_buttons(self, opcion):
+    def _radio_buttons(self, controller, opcion):
         """
         Para que se tenga un comportamiento propio para el radio button.
         Hay que asegurarnos que todos los botones estén agrupados en un punto a
@@ -113,7 +113,6 @@ class Main(tk.Frame):
         profesor = tk.Radiobutton(self, variable=opcion, value="profesor")
         alumno.place(x=647, y=153)
         profesor.place(x=821, y=153)
-
         # Se llama de nuevo a la imagen para que el recolector de
         # basura de python no lo elimine.
         # prueba eliminando la línea y verás que la imagen no se carga.
@@ -132,7 +131,7 @@ class Main(tk.Frame):
         alumno.config(
             indicatoron=False,
             image=alumno_imagen_deseleccionado,
-            command=lambda: self._cambiar_cajatexto(opcion),
+            command=lambda: self._cambiar_cajatexto(controller, opcion),
             bg=ProgramConstants.BLANCO_BLANCO,
             height=34,
             width=160,
@@ -150,7 +149,7 @@ class Main(tk.Frame):
         profesor.config(
             indicatoron=False,
             image=profesor_imagen_deseleccionado,
-            command=lambda: self._cambiar_cajatexto(opcion),
+            command=lambda: self._cambiar_cajatexto(controller, opcion),
             bg=ProgramConstants.BLANCO_BLANCO,
             height=34,
             width=169,
@@ -165,7 +164,7 @@ class Main(tk.Frame):
             selectimage=profesor_imagen_seleccionado,
         )
 
-    def _cambiar_cajatexto(self, opcion):
+    def _cambiar_cajatexto(self, controller, opcion):
         """
         Dependiendo de qué opción esté seleccionada se
         cambiará la primera caja de texto
@@ -178,9 +177,9 @@ class Main(tk.Frame):
         elif opcion.get() == "profesor":
             resultado = "Usuario:"
 
-        self._cajas_texto_(resultado)
+        self._cajas_texto_(controller, resultado)
 
-    def _cajas_texto_(self, tipouser):
+    def _cajas_texto_(self, controller, tipouser):
         """
         Las cajas de texto personalizadas para que se ingrese usuario
         y contraseña
@@ -189,7 +188,7 @@ class Main(tk.Frame):
         """
 
         # Borde de la caja de usuario(ya que no se puede cambiar)
-        borde_usuario = tk.Canvas(self, width=412, height=32, highlightthickness=0)
+        borde_usuario = tk.Canvas(self, width=412, height=28, highlightthickness=0)
         borde_usuario.pack()
         borde_usuario.create_rectangle(
             633, 254,  # x1, y1
@@ -206,13 +205,13 @@ class Main(tk.Frame):
         vcmd = self.register(self.validate)
         global tipo_usuario
         tipo_usuario = tipouser
-        usuario = tk.Entry(self, textvariable=entrada_usuario, validate='all',
+        usuario_sesion = tk.Entry(self, textvariable=entrada_usuario, validate='all',
                            validatecommand=(vcmd, "%S"))
         entrada_usuario.set(tipouser)
-        usuario.place(x=634, y=255)
-        usuario.bind("<Button-1>", lambda e=entrada_usuario: self.__on_click_user__(e))
+        usuario_sesion.place(x=634, y=255)
+        usuario_sesion.bind("<Button-1>", lambda e=entrada_usuario: self.__on_click_user__(e))
 
-        usuario.config(
+        usuario_sesion.config(
             background=ProgramConstants.BLANCO,
             borderwidth=0,  # Quitamos el borde porque por defecto está muy feo.
             font=ProgramConstants.FUENTE_REGULAR_16,
@@ -222,7 +221,7 @@ class Main(tk.Frame):
         )
 
         # Borde de la caja de NIP (ya que no se puede cambiar)
-        borde_password = tk.Canvas(self, width=412, height=32,
+        borde_password = tk.Canvas(self, width=412, height=28,
                                    highlightthickness=0)
         borde_password.pack()
         borde_password.create_rectangle(
@@ -237,13 +236,14 @@ class Main(tk.Frame):
         # Caja de texto de NIP
         global entrada_nip
         entrada_nip = tk.StringVar()
-        global nip
-        nip = tk.Entry(self, textvariable=entrada_nip)
+        global nip_sesion
+        nip_sesion = tk.Entry(self, textvariable=entrada_nip, validate='all',
+                           validatecommand=(vcmd, "%S"))
         entrada_nip.set("NIP:")
-        nip.place(x=634, y=334)
-        nip.bind("<Button-1>", lambda e=entrada_nip, t=tipouser: self.__on_click_password__(e, t))
+        nip_sesion.place(x=634, y=334)
+        nip_sesion.bind("<Button-1>", lambda e=entrada_nip, t=tipouser: self.__on_click_password1__(e, t))
 
-        nip.config(
+        nip_sesion.config(
             background=ProgramConstants.BLANCO,
             borderwidth=0,  # Quitamos el borde porque por defecto está muy feo.
             font=ProgramConstants.FUENTE_REGULAR_16,
@@ -251,6 +251,8 @@ class Main(tk.Frame):
             insertbackground=ProgramConstants.GRIS,
             width=34  # La cantidad de caracteres que se pueden visualizar en la caja de texto.
         )
+
+        self.boton_sesion(controller, tipouser)
 
     def validate(self, char):
         if tipo_usuario == "No. Control:":
@@ -265,23 +267,23 @@ class Main(tk.Frame):
             pass
         if entrada_nip.get() == "":
             entrada_nip.set("NIP:")
-            nip.config(show="")
+            nip_sesion.config(show="")
 
-    def __on_click_password__(self, e, t):
+    def __on_click_password1__(self, e, t):
         # Se muestra NIP: correctamente, y cuando das click y pasa 1ms las letras se ponen en "▪"
-        nip.after(1, lambda: nip.config(show="▪"))
+        nip_sesion.after(1, lambda: nip_sesion.config(show="▪"))
 
         if entrada_nip.get() == "NIP:":
-            nip.config(show="")
+            nip_sesion.config(show="")
             entrada_nip.set("")
         else:
             pass
 
         if entrada_usuario.get() == "":
             entrada_usuario.set(t)
-            nip.config(show="▪")
+            nip_sesion.config(show="▪")
 
-    def boton_sesion(self):
+    def boton_sesion(self, controller, usuario):
         """
         Coloca el botón de inicio de sesión
         :return: El botón para iniciar sesión
@@ -307,10 +309,14 @@ class Main(tk.Frame):
         # de la VENTANA.
         canvas.create_image(0, 0, anchor='nw', image=boton_imagen)
         canvas.place(x=633, y=495)
+        canvas.config(cursor="hand2")
 
         # VALIDACIÓN EN LA BASE DE DATOS
         # canvas.bind("<Button-1>", lambda v: )
-
+        if usuario == "No. Control:":
+            canvas.bind("<Button-1>", lambda e, c=controller: self.__boton_sesion_alumno__(c))
+        elif usuario == "Usuario:":
+            canvas.bind("<Button-1>", lambda e, c=controller: self.__boton_sesion_profesor__(c))
         # CÓDIGO TEMPORAL
         # Te deja entrar no importa lo que ingreses.
 
@@ -365,6 +371,14 @@ class Main(tk.Frame):
     def __texto_sesion__(self, c):
         self.c = c
         c.show_frame(Registro)
+
+    def __boton_sesion_alumno__(self, c):
+        self.c = c
+        c.show_frame(DatosAlumnos)
+
+    def __boton_sesion_profesor__(self, c):
+        self.c = c
+        c.show_frame(DatosProfesor)
 
 
 class Registro(tk.Frame):
@@ -544,30 +558,30 @@ class Registro(tk.Frame):
         """
 
         # Borde de la caja de usuario(ya que no se puede cambiar)
-        borde_usuario = tk.Canvas(self, width=412, height=32, highlightthickness=0)
-        borde_usuario.pack()
-        borde_usuario.create_rectangle(
+        borde_usuario_registro = tk.Canvas(self, width=412, height=28, highlightthickness=0)
+        borde_usuario_registro.pack()
+        borde_usuario_registro.create_rectangle(
             633, 254,  # x1, y1
             1045, 286,  # x2, y2
             width=1,
             outline=ProgramConstants.GRIS_CEMENTO,
             fill=ProgramConstants.BLANCO
         )
-        borde_usuario.place(x=633, y=254)
+        borde_usuario_registro.place(x=633, y=254)
 
         # Caja de texto usuario/no. control
-        global entrada_usuario
-        entrada_usuario = tk.StringVar()
+        global entrada_usuario_registro
+        entrada_usuario_registro = tk.StringVar()
         vcmd = self.register(self.validate)
         global tipo_usuario
         tipo_usuario = tipouser
-        usuario = tk.Entry(self, textvariable=entrada_usuario, validate='all',
+        usuario_registro = tk.Entry(self, textvariable=entrada_usuario_registro, validate='all',
                            validatecommand=(vcmd, "%S"))
-        entrada_usuario.set(tipouser)
-        usuario.place(x=634, y=255)
-        usuario.bind("<Button-1>", lambda e=entrada_usuario: self.__on_click_user__(e))
+        entrada_usuario_registro.set(tipouser)
+        usuario_registro.place(x=634, y=255)
+        usuario_registro.bind("<Button-1>", lambda e=entrada_usuario_registro: self.__on_click_user_registro__(e))
 
-        usuario.config(
+        usuario_registro.config(
             background=ProgramConstants.BLANCO,
             borderwidth=0,  # Quitamos el borde porque por defecto está muy feo.
             font=ProgramConstants.FUENTE_REGULAR_16,
@@ -577,7 +591,7 @@ class Registro(tk.Frame):
         )
 
         # Borde de la caja de NIP (ya que no se puede cambiar)
-        borde_password = tk.Canvas(self, width=412, height=32,
+        borde_password = tk.Canvas(self, width=412, height=28,
                                    highlightthickness=0)
         borde_password.pack()
         borde_password.create_rectangle(
@@ -587,18 +601,19 @@ class Registro(tk.Frame):
             outline=ProgramConstants.GRIS_CEMENTO,
             fill=ProgramConstants.BLANCO
         )
-        borde_password.place(x=633, y=333)
+        borde_password.place(x=633, y=306)
 
         # Caja de texto de NIP
-        global entrada_nip
-        entrada_nip = tk.StringVar()
-        global nip
-        nip = tk.Entry(self, textvariable=entrada_nip)
-        entrada_nip.set("NIP:")
-        nip.place(x=634, y=334)
-        nip.bind("<Button-1>", lambda e=entrada_nip, t=tipouser: self.__on_click_password__(e, t))
+        global entrada_nip_registro
+        entrada_nip_registro = tk.StringVar()
+        global nip_registro
+        nip_registro = tk.Entry(self, textvariable=entrada_nip_registro, validate='all',
+                                validatecommand=(vcmd, "%S"))
+        entrada_nip_registro.set("NIP:")
+        nip_registro.place(x=634, y=307)
+        nip_registro.bind("<Button-1>", lambda e=entrada_nip_registro, t=tipouser: self.__on_click_password_registro__(e, t))
 
-        nip.config(
+        nip_registro.config(
             background=ProgramConstants.BLANCO,
             borderwidth=0,  # Quitamos el borde porque por defecto está muy feo.
             font=ProgramConstants.FUENTE_REGULAR_16,
@@ -607,34 +622,83 @@ class Registro(tk.Frame):
             width=34  # La cantidad de caracteres que se pueden visualizar en la caja de texto.
         )
 
+        # Borde de la caja de Nombre completo (ya que no se puede cambiar)
+        borde_nombre_registro = tk.Canvas(self, width=412, height=28, highlightthickness=0)
+        borde_nombre_registro.pack()
+        borde_nombre_registro.create_rectangle(
+            633, 358,
+            1045, 384,
+            width=1,
+            outline=ProgramConstants.GRIS_CEMENTO,
+            fill=ProgramConstants.BLANCO
+        )
+        borde_nombre_registro.place(x=633, y=358)
+
+        # Caja de texto Nombre completo.
+        global caja_nombre_registro
+        global entrada_nombre_registro
+        entrada_nombre_registro = tk.StringVar()
+        caja_nombre_registro = tk.Entry(self, textvariable=entrada_nombre_registro)
+        entrada_nombre_registro.set("Nombre completo:")
+        caja_nombre_registro.place(x=634, y=359)
+
+        caja_nombre_registro.config(
+            background=ProgramConstants.BLANCO,
+            borderwidth=0,  # Quitamos el borde porque por defecto está muy feo.
+            font=ProgramConstants.FUENTE_REGULAR_16,
+            foreground=ProgramConstants.GRIS,
+            insertbackground=ProgramConstants.GRIS,
+            width=34  # La cantidad de caracteres que se pueden visualizar en la caja de texto.
+        )
+
+        caja_nombre_registro.bind("<Button-1>", lambda tipo=tipouser: self.__on_click_name_registro__(tipo))
+
+
     def validate(self, char):
         if tipo_usuario == "No. Control:":
             return char in "0123456789"
         else:
             pass
 
-    def __on_click_user__(self, e):
-        if entrada_usuario.get() == "No. Control:" or entrada_usuario.get() == "Usuario:":
-            entrada_usuario.set("")
+    def __on_click_user_registro__(self, e):
+        if entrada_usuario_registro.get() == "No. Control:" or entrada_usuario_registro.get() == "Usuario:":
+            entrada_usuario_registro.set("")
         else:
             pass
-        if entrada_nip.get() == "":
-            entrada_nip.set("NIP:")
-            nip.config(show="")
+        if entrada_nip_registro.get() == "":
+            entrada_nip_registro.set("NIP:")
+            nip_registro.config(show="")
+        if entrada_nombre_registro.get() == "":
+            entrada_nombre_registro.set("Nombre completo:")
 
-    def __on_click_password__(self, e, t):
+    def __on_click_password_registro__(self, e, t):
         # Se muestra NIP: correctamente, y cuando das click y pasa 1ms las letras se ponen en "▪"
-        nip.after(1, lambda: nip.config(show="▪"))
-
-        if entrada_nip.get() == "NIP:":
-            nip.config(show="")
-            entrada_nip.set("")
+        nip_registro.after(1, lambda: nip_registro.config(show="▪"))
+        if entrada_nip_registro.get() == "NIP:":
+            nip_registro.config(show="")
+            entrada_nip_registro.set("")
         else:
             pass
 
-        if entrada_usuario.get() == "":
-            entrada_usuario.set(t)
-            nip.config(show="▪")
+        if entrada_usuario_registro.get() == "":
+            entrada_usuario_registro.set(t)
+            nip_registro.config(show="▪")
+
+        if entrada_nombre_registro.get() == "":
+            entrada_nombre_registro.set("Nombre completo:")
+
+    def __on_click_name_registro__(self, tipo):
+        if entrada_nombre_registro.get() == "Nombre completo:":
+            entrada_nombre_registro.set("")
+        else:
+            pass
+
+        if entrada_usuario_registro.get() == "":
+            entrada_usuario_registro.set(tipo_usuario)
+
+        if entrada_nip_registro.get() == "":
+            entrada_nip_registro.set("NIP:")
+            nip_registro.config(show="")
 
     def boton_sesion(self):
         """
@@ -649,7 +713,7 @@ class Registro(tk.Frame):
         canvas = tk.Canvas(self, width=406, height=69,
                            highlightthickness=0)  # highlightthickness quita el borde gris
         canvas.pack()
-        boton_imagen = tk.PhotoImage(file="frontend/recursos/boton1.gif")
+        boton_imagen = tk.PhotoImage(file="frontend/recursos/boton2.gif")
         self.boton_imagen = boton_imagen
         # Se llama de nuevo a la imagen para que el recolector de
         # basura de python no lo elimine.
@@ -721,3 +785,99 @@ class Registro(tk.Frame):
         self.c = c
         c.show_frame(Main)
 
+
+class DatosAlumnos(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
+        # Cabecera
+        self.__imagen_tecnm(controller)
+        self.__label_sii(controller)
+
+    def __imagen_tecnm(self, controller):
+        # Imagen TECNM
+        canvas = tk.Canvas(self, width=334, height=147,
+                           highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        tecnm = tk.PhotoImage(file="frontend/recursos/tecnm.gif")
+        self.tecnm = tecnm  # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=tecnm)
+        canvas.place(x=0, y=0)
+
+    def __label_sii(self, controller):
+        # Label SII
+        texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
+                         fg=ProgramConstants.AZUL_MARINO,
+                         font=ProgramConstants.FUENTE_NEGRITAS_21,
+                         bg=ProgramConstants.BLANCO, )
+        texto.config(height=1, width=31)
+        texto.place(x=588, y=37)
+
+    def __datos_alumno__(self):
+        pass
+
+    def __cabecera_tabla__(self):
+        """
+        
+        :return:
+        """
+
+    def __datos_tabla__(self):
+        pass
+
+    def __boton_registrar_materia__(self):
+        pass
+
+    def __boton_cerrar_sesion__(self):
+        pass
+
+
+class DatosProfesor(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
+        # Cabecera
+        self.__imagen_tecnm()
+        self.__label_sii(controller)
+
+    def __imagen_tecnm(self):
+        # Imagen TECNM
+        canvas = tk.Canvas(self, width=334, height=147,
+                           highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        tecnm = tk.PhotoImage(file="frontend/recursos/tecnm.gif")
+        self.tecnm = tecnm  # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=tecnm)
+        canvas.place(x=0, y=0)
+
+    def __label_sii(self, controller):
+        # Label SII
+        texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
+                         fg=ProgramConstants.AZUL_MARINO,
+                         font=ProgramConstants.FUENTE_NEGRITAS_21,
+                         bg=ProgramConstants.BLANCO, )
+        texto.config(height=1, width=31)
+        texto.place(x=588, y=37)
+
+    def __datos_profesor__(self):
+        pass
+
+    # defl

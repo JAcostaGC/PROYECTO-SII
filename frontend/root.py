@@ -2,9 +2,7 @@
 
 import Tkinter as tk
 from program_constants import *
-from iniciosesion.main import Main, Registro
-from datos_alumno.datosAlumno import Datos_Alumnos
-from datos_profesor.datosProfesor import Datos_Profesor
+from iniciosesion.main import Main, Registro, DatosAlumnos, DatosProfesor
 
 
 class Root(tk.Tk):
@@ -34,7 +32,7 @@ class Root(tk.Tk):
         contenedor.pack(fill="both", expand=True)
 
         self.frames = {}
-        for F in (Main, Registro, Datos_Alumnos, Datos_Profesor):
+        for F in (Main, Registro, DatosAlumnos, DatosProfesor):
             frame = F(parent=contenedor, controller=self)
             self.frames[F] = frame
 
