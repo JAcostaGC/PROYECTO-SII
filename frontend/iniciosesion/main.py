@@ -794,6 +794,8 @@ class DatosAlumnos(tk.Frame):
         # Cabecera
         self.__imagen_tecnm(controller)
         self.__label_sii(controller)
+        self.__cabecera_tabla__()
+        self.__boton_registrar_materia__(controller)
 
     def __imagen_tecnm(self, controller):
         # Imagen TECNM
@@ -827,15 +829,57 @@ class DatosAlumnos(tk.Frame):
 
     def __cabecera_tabla__(self):
         """
-        
+        La cabecera de las calificaciones.
         :return:
         """
+        canvas = tk.Canvas(self, width=630, height=42,
+                           highlightthickness=0) # highlightthickness quita el borde gris
+        canvas.pack()
+        cabecera_tabla = tk.PhotoImage(file="frontend/recursos/cabeceraalumno.gif")
+        self.cabecera_tabla = cabecera_tabla
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=cabecera_tabla)
+        canvas.place(x=368, y=237)
 
     def __datos_tabla__(self):
         pass
 
-    def __boton_registrar_materia__(self):
-        pass
+    def __boton_registrar_materia__(self, controller):
+        """
+        Botón que lleva a la pantalla para registrar una materia
+        en la reticula.
+        :return: El botón para registrar materia en imagen.
+        """
+        canvas = tk.Canvas(self, width=210, height=36,
+                           highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        boton_registrar_img = tk.PhotoImage(file="frontend/recursos/registrarmateria.gif")
+        self.boton_registrar_img = boton_registrar_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=boton_registrar_img)
+        canvas.place(x=917, y=648)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_registro_materias__(controller))
+
+    def __ir_registro_materias__(self, controller):
+        self.controller = controller
+        controller.show_frame(RegistroMateriaAlumno)
 
     def __boton_cerrar_sesion__(self):
         pass
@@ -881,3 +925,77 @@ class DatosProfesor(tk.Frame):
         pass
 
     # defl
+
+
+class RegistroMateriaAlumno(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
+        # Cabecera
+        self.__imagen_tecnm()
+        self.__label_sii(controller)
+
+    def __imagen_tecnm(self):
+        # Imagen TECNM
+        canvas = tk.Canvas(self, width=334, height=147,
+                           highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        tecnm = tk.PhotoImage(file="frontend/recursos/tecnm.gif")
+        self.tecnm = tecnm  # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=tecnm)
+        canvas.place(x=0, y=0)
+
+    def __label_sii(self, controller):
+        # Label SII
+        texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
+                         fg=ProgramConstants.AZUL_MARINO,
+                         font=ProgramConstants.FUENTE_NEGRITAS_21,
+                         bg=ProgramConstants.BLANCO, )
+        texto.config(height=1, width=31)
+        texto.place(x=588, y=37)
+
+
+class RegistroMateriaProfesor(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
+        # Cabecera
+        self.__imagen_tecnm()
+        self.__label_sii(controller)
+
+    def __imagen_tecnm(self):
+        # Imagen TECNM
+        canvas = tk.Canvas(self, width=334, height=147,
+                           highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        tecnm = tk.PhotoImage(file="frontend/recursos/tecnm.gif")
+        self.tecnm = tecnm  # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=tecnm)
+        canvas.place(x=0, y=0)
+
+    def __label_sii(self, controller):
+        # Label SII
+        texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
+                         fg=ProgramConstants.AZUL_MARINO,
+                         font=ProgramConstants.FUENTE_NEGRITAS_21,
+                         bg=ProgramConstants.BLANCO, )
+        texto.config(height=1, width=31)
+        texto.place(x=588, y=37)
