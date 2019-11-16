@@ -206,7 +206,7 @@ class Main(tk.Frame):
         global tipo_usuario
         tipo_usuario = tipouser
         usuario_sesion = tk.Entry(self, textvariable=entrada_usuario, validate='all',
-                           validatecommand=(vcmd, "%S"))
+                                  validatecommand=(vcmd, "%S"))
         entrada_usuario.set(tipouser)
         usuario_sesion.place(x=634, y=255)
         usuario_sesion.bind("<Button-1>", lambda e=entrada_usuario: self.__on_click_user__(e))
@@ -794,10 +794,18 @@ class DatosAlumnos(tk.Frame):
         # Cabecera
         self.__imagen_tecnm(controller)
         self.__label_sii(controller)
+        self.__datos_alumno__(controller)
         self.__cabecera_tabla__()
+        self.__datos_tabla__(controller)
         self.__boton_registrar_materia__(controller)
+        self.__boton_cerrar_sesion__(controller)
 
     def __imagen_tecnm(self, controller):
+        """
+        La imagen de cabecera con el logo del tecnológico nacional de México.
+        :param controller: El controlador de la ventana.
+        :return: La imagen con el logo del TecNM.
+        """
         # Imagen TECNM
         canvas = tk.Canvas(self, width=334, height=147,
                            highlightthickness=0)  # highlightthickness quita el borde gris
@@ -816,6 +824,11 @@ class DatosAlumnos(tk.Frame):
         canvas.place(x=0, y=0)
 
     def __label_sii(self, controller):
+        """
+        El título del programa Sistema Integral de Información(SII)
+        :param controller: El controlador de la ventana.
+        :return: Un texto que describe el titulo del programa.
+        """
         # Label SII
         texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
                          fg=ProgramConstants.AZUL_MARINO,
@@ -824,16 +837,42 @@ class DatosAlumnos(tk.Frame):
         texto.config(height=1, width=31)
         texto.place(x=588, y=37)
 
-    def __datos_alumno__(self):
-        pass
+    def __datos_alumno__(self, controller):
+        """
+        Los datos traidos de MongoDB desplegados en forma de texto.
+        :param controller: El controlador de la ventana.
+        :return: Los datos del alumno.
+        """
+        cal_parciales = tk.Label(self, height=1, width=24, text="Calificaciones Parciales",
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        cal_parciales.place(x=547, y=104)
+        # INICIO DE CODIGO TEMPORAL, POR MODIFICAR.
+        global no_control
+        no_control = "17260628"
+        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + no_control,
+                                    fg=ProgramConstants.AZUL_MARINO,
+                                    font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                    bg=ProgramConstants.BLANCO)
+        no_control_label.place(x=547, y=138)
+
+        global nombre
+        nombre = "Víctor Hugo Vázquez Gómez"
+        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombre,
+                                fg=ProgramConstants.AZUL_MARINO,
+                                font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                bg=ProgramConstants.BLANCO)
+        nombre_label.place(x=479, y=172)
+        # FIN DE CODIGO TEMPORAL, POR MODIFICAR.
 
     def __cabecera_tabla__(self):
         """
-        La cabecera de las calificaciones.
-        :return:
+        La cabecera de las calificaciones con los nombres de las columnas.
+        :return: Una imagen representando la cabecera de la tabla.
         """
         canvas = tk.Canvas(self, width=630, height=42,
-                           highlightthickness=0) # highlightthickness quita el borde gris
+                           highlightthickness=0)  # highlightthickness quita el borde gris
         canvas.pack()
         cabecera_tabla = tk.PhotoImage(file="frontend/recursos/cabeceraalumno.gif")
         self.cabecera_tabla = cabecera_tabla
@@ -849,8 +888,32 @@ class DatosAlumnos(tk.Frame):
         canvas.create_image(0, 0, anchor='nw', image=cabecera_tabla)
         canvas.place(x=368, y=237)
 
-    def __datos_tabla__(self):
-        pass
+    def __datos_tabla__(self, controller):
+        """
+        Los datos de la tabla sacados de MongoDB.
+        :param controller: El controlador de la ventana.
+        :return: Los datos del nombre del profesor, grupo y calificación.
+        """
+        # FRAME CONTENEDOR DE LOS DATOS.
+        canvas = tk.Canvas(self, width=630, height=318, highlightthickness=0)
+        canvas.pack()
+        marco_contenedor_img = tk.PhotoImage(file="frontend/recursos/bordecontenedor.gif")
+        self.marco_contenedor_img = marco_contenedor_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=marco_contenedor_img)
+        canvas.place(x=368, y=277)
+
+        # INICIO DE LOS DATOS DE LA TABLA.
+
+        # FIN DE LOS DATOS DE LA TABLA.
 
     def __boton_registrar_materia__(self, controller):
         """
@@ -881,8 +944,32 @@ class DatosAlumnos(tk.Frame):
         self.controller = controller
         controller.show_frame(RegistroMateriaAlumno)
 
-    def __boton_cerrar_sesion__(self):
-        pass
+    def __boton_cerrar_sesion__(self, controller):
+        """
+        Botón que lleva al menú de inicio de sesión
+        :return: Imagen simulando un botón.
+        """
+        canvas = tk.Canvas(self, width=192, height=36, highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        boton_cerrarsesion_img = tk.PhotoImage(file="frontend/recursos/cerrarsesion.gif")
+        self.boton_cerrarsesion_img = boton_cerrarsesion_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=boton_cerrarsesion_img)
+        canvas.place(x=1152, y=648)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_iniciosesion__(controller))
+
+    def __ir_iniciosesion__(self, controller):
+        self.controller = controller
+        controller.show_frame(Main)
 
 
 class DatosProfesor(tk.Frame):
@@ -935,6 +1022,11 @@ class RegistroMateriaAlumno(tk.Frame):
         # Cabecera
         self.__imagen_tecnm()
         self.__label_sii(controller)
+        self.__datos_alumno__(controller)
+        self.__cabecera_tabla__()
+        self.__datos_tabla__(controller)
+        self.__boton_ver_materias__(controller)
+        self.__boton_cerrar_sesion__(controller)
 
     def __imagen_tecnm(self):
         # Imagen TECNM
@@ -962,6 +1054,138 @@ class RegistroMateriaAlumno(tk.Frame):
                          bg=ProgramConstants.BLANCO, )
         texto.config(height=1, width=31)
         texto.place(x=588, y=37)
+
+    def __datos_alumno__(self, controller):
+        """
+        Los datos traidos de MongoDB desplegados en forma de texto.
+        :param controller: El controlador de la ventana.
+        :return: Los datos del alumno.
+        """
+        esc_materia = tk.Label(self, height=1, width=18, text="Escoge una materia",
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        esc_materia.place(x=534, y=104)
+        # INICIO DE CODIGO TEMPORAL, POR MODIFICAR.
+        global no_control
+        no_control = "17260628"
+        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + no_control,
+                                    fg=ProgramConstants.AZUL_MARINO,
+                                    font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                    bg=ProgramConstants.BLANCO)
+        no_control_label.place(x=500, y=138)
+
+        global nombre
+        nombre = "Víctor Hugo Vázquez Gómez"
+        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombre,
+                                fg=ProgramConstants.AZUL_MARINO,
+                                font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                bg=ProgramConstants.BLANCO)
+        nombre_label.place(x=445, y=172)
+        # FIN DE CODIGO TEMPORAL, POR MODIFICAR.
+
+    def __cabecera_tabla__(self):
+        """
+        La cabecera de las materias disponibles con los nombres de las
+        columnas.
+        :return: Imagen representando la cabecera.
+        """
+        canvas = tk.Canvas(self, width=366, height=40, highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        cabecera_tabla_img = tk.PhotoImage(file="frontend/recursos/cabeceraregistramateriaalumno.gif")
+        self.cabecera_tabla_img = cabecera_tabla_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=cabecera_tabla_img)
+        canvas.place(x=464, y=281)
+
+    def __datos_tabla__(self, controller):
+        """
+        Los datos de la tabla sacados de MongoDB.
+        :param controller: El controlador de la ventana.
+        :return: Los nombres de los profesores y sus grupos.
+        """
+        # FRAME CONTENEDOR DE LOS DATOS.
+        canvas = tk.Canvas(self, width=366, height=318, highlightthickness=0)
+        canvas.pack()
+        marco_contenedor_profesores_img = tk.PhotoImage(file="frontend/recursos/bordecontenedormaestros.gif")
+        self.marco_contenedor_profesores_img = marco_contenedor_profesores_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=marco_contenedor_profesores_img)
+        canvas.place(x=464, y=321)
+        # INICIO DE LOS DATOS DE LA TABLA.
+
+        # FIN DE LOS DATOS DE LA TABLA.
+
+    def __boton_ver_materias__(self, controller):
+        """
+        Botón que te lleva a la ventana anterior para ver las materias que estás cursando.
+        :param controller: El controlador de la ventana.
+        :return: El botón como imagen con un bind para regresar a otro frame.
+        """
+        canvas = tk.Canvas(self, width=210, height=36, highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        boton_ver_materias_img = tk.PhotoImage(file="frontend/recursos/vermaterias.gif")
+        self.boton_ver_materias_img = boton_ver_materias_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=boton_ver_materias_img)
+        canvas.place(x=917, y=648)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_datos_alumnos__(controller))
+
+    def __ir_datos_alumnos__(self, controller):
+        self.controller = controller
+        controller.show_frame(DatosAlumnos)
+
+    def __boton_cerrar_sesion__(self, controller):
+        """
+        Botón que lleva al menú de inicio de sesión
+        :return: Imagen simulando un botón.
+        """
+        canvas = tk.Canvas(self, width=192, height=36, highlightthickness=0)  # highlightthickness quita el borde gris
+        canvas.pack()
+        boton_cerrarsesion_ = tk.PhotoImage(file="frontend/recursos/cerrarsesion.gif")
+        self.boton_cerrarsesion_ = boton_cerrarsesion_
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        canvas.create_image(0, 0, anchor='nw', image=boton_cerrarsesion_)
+        canvas.place(x=1152, y=648)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_menu_principal__(controller))
+
+    def __ir_menu_principal__(self, controller):
+        self.controller = controller
+        controller.show_frame(Main)
 
 
 class RegistroMateriaProfesor(tk.Frame):
