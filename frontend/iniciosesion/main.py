@@ -1,6 +1,7 @@
 # coding: utf-8
 
 from ..root import *
+import ttk
 
 
 class Main(tk.Frame):
@@ -980,6 +981,9 @@ class DatosProfesor(tk.Frame):
         # Cabecera
         self.__imagen_tecnm()
         self.__label_sii(controller)
+        self.__datos_profesores__(controller)
+        self.__seleccion_materia__(controller)
+        # self.__alumno_materia__(controller)
 
     def __imagen_tecnm(self):
         # Imagen TECNM
@@ -1008,10 +1012,139 @@ class DatosProfesor(tk.Frame):
         texto.config(height=1, width=31)
         texto.place(x=588, y=37)
 
-    def __datos_profesor__(self):
+    def __datos_profesores__(self, controller):
+        """
+        Los datos traidos por MongoDB desplegados en forma de texto.
+        :param controller: El controlador de la ventana.
+        :return: Los datos del profesor.
+        """
+        cal_parciales = tk.Label(self, height=1, width=24, text="Calificaciones Parciales",
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        cal_parciales.place(x=547, y=104)
+        # INICIO DEL CODIGO TEMPORAL, POR MODIFICAR.
+        global usuario
+        usuario = "vhugobarnes"
+        usuario_label = tk.Label(self, height=1, width=20, text="Usuario: " + usuario,
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        usuario_label.place(x=547, y=138)
+
+        global nombreProfesor
+        nombreProfesor = "Víctor Hugo Vázquez Gómez"
+        nombreProfesor_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombreProfesor,
+                                        fg=ProgramConstants.AZUL_MARINO,
+                                        font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                        bg=ProgramConstants.BLANCO)
+        nombreProfesor_label.place(x=479, y=172)
+        # FIN DEL CODIGO TEMPORAL, POR MODIFICAR.
+
+    def __seleccion_materia__(self, controller):
+        """
+        El menú para que el profesor seleccione la materia que tenga registrada.
+        Al iniciar se selecciona por defecto la primera materia en su lista de materias.
+        Las materias se seleccionan por medio de un ComboBox.
+        :param controller: El controlador de la ventana.
+        :return: El ComboBox para elegir la materia.
+        """
+        borde_materia = tk.Canvas(self, width=1238, height=456, highlightthickness=0)
+        borde_materia.pack()
+        borde_materia_profesor_img = tk.PhotoImage(file="frontend/recursos/rectangulomainprofesor.gif")
+        self.borde_materia_profesor_img = borde_materia_profesor_img
+        # Se llama de nuevo a la imagen para que el recolector de
+        # basura de python no lo elimine.
+        # prueba eliminando la línea y verás que la imagen no se carga.
+
+        # Es muy diferente la posición en create_image() y place()
+        # La posición en create_image() hace referencia a la posición DENTRO
+        # del CANVAS.
+        # La posición en place() hace referencia a la posición DENTRO
+        # de la VENTANA.
+        borde_materia.create_image(0, 0, anchor='nw', image=borde_materia_profesor_img)
+        borde_materia.place(x=21, y=220)
+
+        materia_label = tk.Label(self, height=1, width=7, text="Materia",
+                                 fg=ProgramConstants.GRIS_OSCURO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO_BLANCO)
+        materia_label.place(x=42, y=233)
+        # INICIO DEL CODIGO TEMPORAL, POR MODIFICAR.
+        global lista_materias
+        lista_materias = ["Graficación", "Taller de Base de Datos"]
+        self.materias_combobox = ttk.Combobox(self, state="readonly")
+        self.materias_combobox["values"] = lista_materias
+        self.materias_combobox.current(0)
+        self.materias_combobox.place(x=145, y=236)
+        self.materias_combobox.config(
+            background=ProgramConstants.BLANCO,
+            font=ProgramConstants.FUENTE_REGULAR_16,
+            foreground=ProgramConstants.GRIS,
+        )
+        # current_subject = materias_combobox.get()
+        self.materias_combobox.bind("<<ComboboxSelected>>", lambda e: self.__alumno_materia__(controller))
+
+        # FINAL DEL CODIGO TEMPORAL, POR MODIFICAR
+
+    def __alumno_materia__(self, controller):
+        """
+        El sub-menu que se abre al seleccionar una materia.
+        Contiene los alumnos registrados en la materia.
+        El profesor es capaz de insertar/actualizar calificaciones.
+        :param controller: El controlador de la ventana.
+        :return: El sub-menu que contiene los alumnos de la materia.
+        """
+        # MARCO SUB-MENU
+        canvas = tk.Canvas(self, width=1169, height=352, highlightthickness=0)
+        canvas.pack()
+        borde_submenu_profesores_img = tk.PhotoImage(file="frontend/recursos/rectangulosubprofesor.gif")
+        self.borde_submenu_profesores_img = borde_submenu_profesores_img
+        canvas.create_image(0, 0, anchor='nw', image=borde_submenu_profesores_img)
+        canvas.place(x=42, y=304)
+        # INICIO DEL CODIGO TEMPORAL, POR MODIFICAR.
+        # COMBO BOX
+        global lista_alumnos
+        lista_alumnos = ["Víctor Hugo Vázquez Gómez", "Nicole Rodriguez González"]
+        self.alumnos_combobox = ttk.Combobox(self, state="readonly")
+        self.alumnos_combobox["values"] = lista_alumnos
+        self.alumnos_combobox.current(0)
+        self.alumnos_combobox.place(x=56, y=326)
+        self.alumnos_combobox.config(
+            background=ProgramConstants.BLANCO,
+            font=ProgramConstants.FUENTE_REGULAR_16,
+            foreground=ProgramConstants.GRIS,
+        )
+        # LISTA DE CALIFICACIONES.
+        global lista_calificaciones
+        lista_calificaciones = ["80", "80", "80", "80", "80", "80", "80"]
+        self.alumnos_combobox.bind("<<ComboboxSelected>>", lambda e: self.__calificaciones_alumno__(controller))
+        # FINAL DEL CODIGO TEMPORAL, POR MODIFICAR.
+
+    def __calificaciones_alumno__(self, controller):
+        """
+        Se muestran las etiquetas junto sus Entry para almacenar/actualizar la
+        información dentro de la base de datos.
+        :param controller: El controlador de la ventana.
+        :return: Las Label y Entry para almacenar las calificaciones, además del
+                 botón para guardarlas.
+        """
+        # ETIQUETAS.
+        unidad1_label = tk.Label(self, )
+
+    def __registrar_materia__(self, controller):
         pass
 
-    # defl
+    def __ir_escoger_materia__(self, controller):
+        self.controller = controller
+        controller.show_frame(RegistroMateriaProfesor)
+
+    def __cerrar_sesion__(self, controller):
+        pass
+
+    def __ir_iniciosesion__(self, controller):
+        self.controller = controller
+        controller.show_frame(Main)
 
 
 class RegistroMateriaAlumno(tk.Frame):
@@ -1067,17 +1200,17 @@ class RegistroMateriaAlumno(tk.Frame):
                                  bg=ProgramConstants.BLANCO)
         esc_materia.place(x=534, y=104)
         # INICIO DE CODIGO TEMPORAL, POR MODIFICAR.
-        global no_control
-        no_control = "17260628"
-        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + no_control,
+        global no_control2
+        no_control2 = "17260628"
+        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + no_control2,
                                     fg=ProgramConstants.AZUL_MARINO,
                                     font=ProgramConstants.FUENTE_NEGRITAS_18,
                                     bg=ProgramConstants.BLANCO)
         no_control_label.place(x=500, y=138)
 
-        global nombre
-        nombre = "Víctor Hugo Vázquez Gómez"
-        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombre,
+        global nombre2
+        nombre2 = "Víctor Hugo Vázquez Gómez"
+        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombre2,
                                 fg=ProgramConstants.AZUL_MARINO,
                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
                                 bg=ProgramConstants.BLANCO)
