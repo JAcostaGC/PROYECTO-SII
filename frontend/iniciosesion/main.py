@@ -5,33 +5,19 @@ import ttk
 
 
 class Main(tk.Frame):
-    """
-    Pantalla de inicio de sesión.
-    Contiene:
-    - Cabecera
-    - Escudo
-    - Cuadro inicio sesión
-    - Cuadro de registro
-    """
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
-        # Cabecera
         self.__imagen_tecnm()
         self.__label_sii()
         self._escudo()
         self.__cuadro_sesion(controller)
-        # self._radio_buttons()
         self._cajas_texto_(controller, "No. Control:")
-        # self.boton_sesion(controller)
         self._cuadro_registro()
         self.__texto__(controller)
 
     def __imagen_tecnm(self):
-        # Imagen TECNM
-        # highlightthickness quita el borde gris
         canvas = tk.Canvas(self, width=334, height=147, highlightthickness=0)
         canvas.pack()
         tecnm = tk.PhotoImage(file="frontend/recursos/tecnm.gif")
@@ -48,7 +34,6 @@ class Main(tk.Frame):
         canvas.place(x=0, y=0)
 
     def __label_sii(self):
-        # Label SII
         texto = tk.Label(self, text="SISTEMA INTEGRAL DE INFORMACIÓN",
                          fg=ProgramConstants.AZUL_MARINO,
                          font=ProgramConstants.FUENTE_NEGRITAS_21,
@@ -57,7 +42,6 @@ class Main(tk.Frame):
         texto.place(x=588, y=37)
 
     def _escudo(self):
-        # highlightthickness quita el borde gris
         canvas = tk.Canvas(self, width=370, height=386, highlightthickness=0)
         canvas.pack()
         itm = tk.PhotoImage(file="frontend/recursos/itmatamoros.gif")
@@ -392,7 +376,6 @@ class Registro(tk.Frame):
         self.__label_sii()
         self._escudo()
         self.__cuadro_sesion()
-        # self._radio_buttons()
         self._cajas_texto_("No. Control:")
         self.boton_sesion()
         self._cuadro_registro()
@@ -653,7 +636,6 @@ class Registro(tk.Frame):
         )
 
         caja_nombre_registro.bind("<Button-1>", lambda tipo=tipouser: self.__on_click_name_registro__(tipo))
-
 
     def validate(self, char):
         if tipo_usuario == "No. Control:":
@@ -978,12 +960,12 @@ class DatosProfesor(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
-        # Cabecera
         self.__imagen_tecnm()
         self.__label_sii(controller)
         self.__datos_profesores__(controller)
         self.__seleccion_materia__(controller)
-        # self.__alumno_materia__(controller)
+        self.__registrar_materia__(controller)
+        self.__cerrar_sesion__(controller)
 
     def __imagen_tecnm(self):
         # Imagen TECNM
@@ -1116,8 +1098,7 @@ class DatosProfesor(tk.Frame):
             foreground=ProgramConstants.GRIS,
         )
         # LISTA DE CALIFICACIONES.
-        global lista_calificaciones
-        lista_calificaciones = ["80", "80", "80", "80", "80", "80", "80"]
+        self.lista_calificaciones = ["80", "80", "80", "80", "80", "80", "80"]
         self.alumnos_combobox.bind("<<ComboboxSelected>>", lambda e: self.__calificaciones_alumno__(controller))
         # FINAL DEL CODIGO TEMPORAL, POR MODIFICAR.
 
@@ -1130,17 +1111,130 @@ class DatosProfesor(tk.Frame):
                  botón para guardarlas.
         """
         # ETIQUETAS.
-        unidad1_label = tk.Label(self, )
+        unidad1_label = tk.Label(self, text="Unidad I",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad1_label.place(x=56, y=453)
+        unidad2_label = tk.Label(self, text="Unidad II",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad2_label.place(x=56, y=502)
+        unidad3_label = tk.Label(self, text="Unidad III",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad3_label.place(x=56, y=551)
+        unidad4_label = tk.Label(self, text="Unidad IV",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad4_label.place(x=56, y=600)
+        unidad5_label = tk.Label(self, text="Unidad V",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad5_label.place(x=356, y=453)
+        unidad6_label = tk.Label(self, text="Unidad VI",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad6_label.place(x=356, y=502)
+        unidad7_label = tk.Label(self, text="Unidad VII",
+                                 fg=ProgramConstants.GRIS,
+                                 font=ProgramConstants.FUENTE_REGULAR_16,
+                                 bg=ProgramConstants.BLANCO)
+        unidad7_label.place(x=356, y=551)
+        # ENTRADAS.
+        global unidad1, unidad2, unidad3, unidad4, unidad5, unidad6, unidad7
+        vcmd = self.register(self.validate)
+
+        unidad1 = tk.StringVar()
+        unidad1_entry = tk.Entry(self, textvariable=unidad1, validate="all", validatecommand=(vcmd, "%S"))
+        unidad1.set(self.lista_calificaciones[0])
+        unidad1_entry.place(x=166, y=453)
+
+        unidad2 = tk.StringVar()
+        unidad2_entry = tk.Entry(self, textvariable=unidad2, validate="all", validatecommand=(vcmd, "%S"))
+        unidad2.set(self.lista_calificaciones[1])
+        unidad2_entry.place(x=166, y=502)
+
+        unidad3 = tk.StringVar()
+        unidad3_entry = tk.Entry(self, textvariable=unidad3, validate="all", validatecommand=(vcmd, "%S"))
+        unidad3.set(self.lista_calificaciones[2])
+        unidad3_entry.place(x=166, y=551)
+
+        unidad4 = tk.StringVar()
+        unidad4_entry = tk.Entry(self, textvariable=unidad4, validate="all", validatecommand=(vcmd, "%S"))
+        unidad4.set(self.lista_calificaciones[3])
+        unidad4_entry.place(x=166, y=600)
+
+        unidad5 = tk.StringVar()
+        unidad5_entry = tk.Entry(self, textvariable=unidad5, validate="all", validatecommand=(vcmd, "%S"))
+        unidad5.set(self.lista_calificaciones[4])
+        unidad5_entry.place(x=474, y=453)
+
+        unidad6 = tk.StringVar()
+        unidad6_entry = tk.Entry(self, textvariable=unidad6, validate="all", validatecommand=(vcmd, "%S"))
+        unidad6.set(self.lista_calificaciones[5])
+        unidad6_entry.place(x=474, y=502)
+
+        unidad7 = tk.StringVar()
+        unidad7_entry = tk.Entry(self, textvariable=unidad7, validate="all", validatecommand=(vcmd, "%S"))
+        unidad7.set(self.lista_calificaciones[6])
+        unidad7_entry.place(x=474, y=551)
+
+        self.lista_parciales = [unidad1.get(), unidad2.get(), unidad3.get(), unidad4.get(), unidad5.get(),
+                                unidad6.get(), unidad7.get()]
+
+        # BOTÓN GUARDAR CALIFICACIONES.
+        canvas = tk.Canvas(self, width=192, height=36, highlightthickness=0)
+        canvas.pack()
+        guardarcambios_img = tk.PhotoImage(file="frontend/recursos/guardarcambios.gif")
+        self.guardarcambios_img = guardarcambios_img
+        canvas.create_image(0, 0, anchor='nw', image=guardarcambios_img)
+        canvas.place(x=916, y=579)
+        canvas.config(cursor="hand2")
+        # PENDIENTE POR MODIFICAR.
+        # canvas.bind("<Button-1>", )
+
+    def validate(self, char):
+        return char in "0123456789'"
 
     def __registrar_materia__(self, controller):
-        pass
+        """
+        Botón que lleva a la pantalla para registrar materias.
+        :param controller:
+        :return:
+        """
+        canvas = tk.Canvas(self, width=210, height=36, highlightthickness=0)
+        canvas.pack()
+        registrarmateria_profesor_img = tk.PhotoImage(file="frontend/recursos/registrarmateria.gif")
+        self.registrarmateria_profesor_img = registrarmateria_profesor_img
+        canvas.create_image(0, 0, anchor='nw', image=registrarmateria_profesor_img)
+        canvas.place(x=916, y=652)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_escoger_materia__(controller))
 
     def __ir_escoger_materia__(self, controller):
         self.controller = controller
         controller.show_frame(RegistroMateriaProfesor)
 
     def __cerrar_sesion__(self, controller):
-        pass
+        """
+        Botón que lleva a la página principal de inicio de sesión.
+        :param controller: El controlador de la ventana.
+        :return: El botón que lleva a Main
+        """
+        canvas = tk.Canvas(self, width=192, height=36, highlightthickness=0)
+        canvas.pack()
+        cerrarsesion_profesor_img = tk.PhotoImage(file="frontend/recursos/cerrarsesion.gif")
+        self.cerrarsesion_profesor_img = cerrarsesion_profesor_img
+        canvas.create_image(0, 0, anchor='nw', image=cerrarsesion_profesor_img)
+        canvas.place(x=1151, y=652)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_iniciosesion__(controller))
 
     def __ir_iniciosesion__(self, controller):
         self.controller = controller
@@ -1326,9 +1420,13 @@ class RegistroMateriaProfesor(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
         self.configure(bg=ProgramConstants.BLANCO, height=700, width=1366)
-        # Cabecera
         self.__imagen_tecnm()
         self.__label_sii(controller)
+        self.__datos_profesor__(controller)
+        self.__cabecera_materias__(controller)
+        self.__datos_materias__(controller)
+        self.__ver_materias__(controller)
+        self.__cerrar_sesion__(controller)
 
     def __imagen_tecnm(self):
         # Imagen TECNM
@@ -1356,3 +1454,100 @@ class RegistroMateriaProfesor(tk.Frame):
                          bg=ProgramConstants.BLANCO, )
         texto.config(height=1, width=31)
         texto.place(x=588, y=37)
+
+    def __datos_profesor__(self, controller):
+        """
+        Los datos traidos por MongoDB desplegados en forma de texto.
+        :param controller: El controlador de la ventana.
+        :return: Los datos del profesor.
+        """
+        cal_parciales = tk.Label(self, height=1, width=22, text="Selecciona una materia",
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        cal_parciales.place(x=547, y=104)
+        # INICIO DEL CODIGO TEMPORAL, POR MODIFICAR.
+        global usuario_vermaterias
+        usuario_vermaterias = "vhugobarnes"
+        usuario_label = tk.Label(self, height=1, width=20, text="Usuario: " + usuario_vermaterias,
+                                 fg=ProgramConstants.AZUL_MARINO,
+                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                 bg=ProgramConstants.BLANCO)
+        usuario_label.place(x=547, y=138)
+
+        global nombreProfesor_vermaterias
+        nombreProfesor_vermaterias = "Víctor Hugo Vázquez Gómez"
+        nombreProfesor_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombreProfesor_vermaterias,
+                                        fg=ProgramConstants.AZUL_MARINO,
+                                        font=ProgramConstants.FUENTE_NEGRITAS_18,
+                                        bg=ProgramConstants.BLANCO)
+        nombreProfesor_label.place(x=479, y=172)
+        # FIN DEL CODIGO TEMPORAL, POR MODIFICAR.
+
+    def __cabecera_materias__(self, controller):
+        """
+        La cabecera de la tabla para que el profesor escoja materia.
+        :param controller: El controlador de la ventana.
+        :return: La cabecera de la tabla.
+        """
+        canvas = tk.Canvas(self, width=366, height=40, highlightthickness=0)
+        canvas.pack()
+        cabecera_materias_img = tk.PhotoImage(file="frontend/recursos/cabeceraregistrarmateriaprofe.gif")
+        self.cabecera_materias_img = cabecera_materias_img
+        canvas.create_image(0, 0, anchor='nw', image=cabecera_materias_img)
+        canvas.place(x=471, y=270)
+
+    def __datos_materias__(self, controller):
+        """
+        Los datos traidos de MongoDB.
+        :param controller: El controlador de la ventana.
+        :return: Los datos de las materias y sus grupos.
+        """
+        # FRAME CONTENEDOR DE LOS DATOS.
+        canvas = tk.Canvas(self, width=366, height=318, highlightthickness=0)
+        canvas.pack()
+        marco_contenedormaterias_img = tk.PhotoImage(file="frontend/recursos/bordecontenedormaterias.gif")
+        self.marco_contenedormaterias_img = marco_contenedormaterias_img
+        canvas.create_image(0, 0, anchor='nw', image=marco_contenedormaterias_img)
+        canvas.place(x=471, y=310)
+        # INICIO DE LOS DATOS DE LA TABLA.
+
+        # FIN DE LOS DATOS DE LA TABLA.
+
+    def __ver_materias__(self, controller):
+        """
+        Botón que lleva a la pantalla para registrar materias.
+        :param controller:
+        :return:
+        """
+        canvas = tk.Canvas(self, width=210, height=36, highlightthickness=0)
+        canvas.pack()
+        registrarmateria_profesor_img = tk.PhotoImage(file="frontend/recursos/vermaterias.gif")
+        self.registrarmateria_profesor_img = registrarmateria_profesor_img
+        canvas.create_image(0, 0, anchor='nw', image=registrarmateria_profesor_img)
+        canvas.place(x=916, y=652)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_materias__(controller))
+
+    def __ir_materias__(self, controller):
+        self.controller = controller
+        controller.show_frame(DatosProfesor)
+
+    def __cerrar_sesion__(self, controller):
+        """
+        Botón que lleva a la página principal de inicio de sesión.
+        :param controller: El controlador de la ventana.
+        :return: El botón que lleva a Main
+        """
+        canvas = tk.Canvas(self, width=192, height=36, highlightthickness=0)
+        canvas.pack()
+        cerrarsesion_profesor_img = tk.PhotoImage(file="frontend/recursos/cerrarsesion.gif")
+        self.cerrarsesion_profesor_img = cerrarsesion_profesor_img
+        canvas.create_image(0, 0, anchor='nw', image=cerrarsesion_profesor_img)
+        canvas.place(x=1151, y=652)
+        canvas.config(cursor="hand2")
+        canvas.bind("<Button-1>", lambda e: self.__ir_inicio_sesion__(controller))
+
+    def __ir_inicio_sesion__(self, controller):
+        self.controller = controller
+        controller.show_frame(Main)
