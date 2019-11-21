@@ -1,7 +1,9 @@
 # coding: utf-8
 
-from ..root import *
-import ttk
+from frontend.root import *
+import ttk  # Importa clases personalizadas de Tkinter
+import pymongo  # Para conectar MongoDB con Python
+import tkMessageBox as tkm
 
 
 class Main(tk.Frame):
@@ -13,7 +15,7 @@ class Main(tk.Frame):
         self.__label_sii()
         self._escudo()
         self.__cuadro_sesion(controller)
-        self._cajas_texto_(controller, "No. Control:")
+        self._cajas_texto_(parent, controller, "No. Control:")
         self._cuadro_registro()
         self.__texto__(controller)
 
@@ -164,7 +166,7 @@ class Main(tk.Frame):
 
         self._cajas_texto_(controller, resultado)
 
-    def _cajas_texto_(self, controller, tipouser):
+    def _cajas_texto_(self, parent, controller, tipouser):
         """
         Las cajas de texto personalizadas para que se ingrese usuario
         y contraseña
@@ -223,7 +225,7 @@ class Main(tk.Frame):
         entrada_nip = tk.StringVar()
         global nip_sesion
         nip_sesion = tk.Entry(self, textvariable=entrada_nip, validate='all',
-                           validatecommand=(vcmd, "%S"))
+                              validatecommand=(vcmd, "%S"))
         entrada_nip.set("NIP:")
         nip_sesion.place(x=634, y=334)
         nip_sesion.bind("<Button-1>", lambda e=entrada_nip, t=tipouser: self.__on_click_password1__(e, t))
@@ -237,7 +239,7 @@ class Main(tk.Frame):
             width=34  # La cantidad de caracteres que se pueden visualizar en la caja de texto.
         )
 
-        self.boton_sesion(controller, tipouser)
+        self.boton_sesion(parent, controller, tipouser)
 
     def validate(self, char):
         if tipo_usuario == "No. Control:":
@@ -268,7 +270,7 @@ class Main(tk.Frame):
             entrada_usuario.set(t)
             nip_sesion.config(show="▪")
 
-    def boton_sesion(self, controller, usuario):
+    def boton_sesion(self, parent, controller, usuario):
         """
         Coloca el botón de inicio de sesión
         :return: El botón para iniciar sesión
@@ -299,9 +301,9 @@ class Main(tk.Frame):
         # VALIDACIÓN EN LA BASE DE DATOS
         # canvas.bind("<Button-1>", lambda v: )
         if usuario == "No. Control:":
-            canvas.bind("<Button-1>", lambda e, c=controller: self.__boton_sesion_alumno__(c))
+            canvas.bind("<Button-1>", lambda e, c=controller: self._verificar_alumno(parent, c))
         elif usuario == "Usuario:":
-            canvas.bind("<Button-1>", lambda e, c=controller: self.__boton_sesion_profesor__(c))
+            canvas.bind("<Button-1>", lambda e, c=controller: self._verificar_profesor(c))
         # CÓDIGO TEMPORAL
         # Te deja entrar no importa lo que ingreses.
 
@@ -365,6 +367,28 @@ class Main(tk.Frame):
         self.c = c
         c.show_frame(DatosProfesor)
 
+    def _verificar_alumno(self, parent, controller):
+        conexion = pymongo.MongoClient('localhost', 27017)
+        mydb = conexion["escuela"]
+        coleccionAlumno = mydb["alumno"]
+        for x in coleccionAlumno.find({}, {"no_control": entrada_usuario.get(), "nip": entrada_nip.get()}):
+            if x["no_control"] == entrada_usuario.get() and x["nip"] == entrada_nip.get():
+                self.__boton_sesion_alumno__(controller)
+                dAlumnos = DatosAlumnos(parent, controller)
+                dAlumnos.__datos_alumno__(x["no_control"], x["nip"])
+            else:
+                tkm.showerror("Usuario o contraseña incorrecta", "Ingresaste mal la contraseña o usuario")
+
+    def _verificar_profesor(self, controller):
+        conexion = pymongo.MongoClient('localhost', 27017)
+        mydb = conexion["escuela"]
+        coleccionProfesor = mydb["profesor"]
+        for x in coleccionProfesor.find({}, {"usuario": entrada_usuario.get(), "nip": entrada_nip.get()}):
+            if x["usuario"] == entrada_usuario.get() and x["nip"] == entrada_nip.get():
+                self.__boton_sesion_profesor__(controller)
+            else:
+                tkm.showerror("Usuario o contraseña incorrecta", "Ingresaste mal la contraseña o usuario")
+
 
 class Registro(tk.Frame):
     def __init__(self, parent, controller):
@@ -375,9 +399,9 @@ class Registro(tk.Frame):
         self.__imagen_tecnm()
         self.__label_sii()
         self._escudo()
-        self.__cuadro_sesion()
-        self._cajas_texto_("No. Control:")
-        self.boton_sesion()
+        self.__cuadro_sesion(parent, controller)
+        self._cajas_texto_(parent, controller, "No. Control:")
+        # self.boton_sesion()
         self._cuadro_registro()
         self.__texto__(controller)
 
@@ -425,7 +449,7 @@ class Registro(tk.Frame):
         canvas.create_image(0, 0, anchor='nw', image=itm)
         canvas.place(x=213, y=166)
 
-    def __cuadro_sesion(self):
+    def __cuadro_sesion(self, parent, controller):
         """
         Se crea un rectangulo como una imagen.
         :return: Un rectangulo donde se conjugan las herramientas necesarioas para iniciar sesión
@@ -449,9 +473,9 @@ class Registro(tk.Frame):
 
         # RadioButton (soy alumno/soy profesor)
         soy_alumno = tk.StringVar()
-        self._radio_buttons(soy_alumno)
+        self._radio_buttons(parent, controller, soy_alumno)
 
-    def _radio_buttons(self, opcion):
+    def _radio_buttons(self, parent, controller, opcion):
         """
         Para que se tenga un comportamiento propio para el radio button.
         Hay que asegurarnos que todos los botones estén agrupados en un punto a
@@ -485,7 +509,7 @@ class Registro(tk.Frame):
         alumno.config(
             indicatoron=False,
             image=alumno_imagen_deseleccionado,
-            command=lambda: self._cambiar_cajatexto(opcion),
+            command=lambda: self._cambiar_cajatexto(parent, controller, opcion),
             bg=ProgramConstants.BLANCO_BLANCO,
             height=34,
             width=160,
@@ -503,7 +527,7 @@ class Registro(tk.Frame):
         profesor.config(
             indicatoron=False,
             image=profesor_imagen_deseleccionado,
-            command=lambda: self._cambiar_cajatexto(opcion),
+            command=lambda: self._cambiar_cajatexto(parent, controller, opcion),
             bg=ProgramConstants.BLANCO_BLANCO,
             height=34,
             width=169,
@@ -518,7 +542,7 @@ class Registro(tk.Frame):
             selectimage=profesor_imagen_seleccionado,
         )
 
-    def _cambiar_cajatexto(self, opcion):
+    def _cambiar_cajatexto(self, parent, controller, opcion):
         """
         Dependiendo de qué opción esté seleccionada se
         cambiará la primera caja de texto
@@ -531,9 +555,9 @@ class Registro(tk.Frame):
         elif opcion.get() == "profesor":
             resultado = "Usuario:"
 
-        self._cajas_texto_(resultado)
+        self._cajas_texto_(parent, controller, resultado)
 
-    def _cajas_texto_(self, tipouser):
+    def _cajas_texto_(self, parent, controller, tipouser):
         """
         Las cajas de texto personalizadas para que se ingrese usuario
         y contraseña
@@ -637,6 +661,8 @@ class Registro(tk.Frame):
 
         caja_nombre_registro.bind("<Button-1>", lambda tipo=tipouser: self.__on_click_name_registro__(tipo))
 
+        self.boton_sesion(parent, controller, tipouser)
+
     def validate(self, char):
         if tipo_usuario == "No. Control:":
             return char in "0123456789"
@@ -683,7 +709,7 @@ class Registro(tk.Frame):
             entrada_nip_registro.set("NIP:")
             nip_registro.config(show="")
 
-    def boton_sesion(self):
+    def boton_sesion(self, parent, controller, tipouser):
         """
         Coloca el botón de inicio de sesión
         :return: El botón para iniciar sesión
@@ -709,9 +735,12 @@ class Registro(tk.Frame):
         # de la VENTANA.
         canvas.create_image(0, 0, anchor='nw', image=boton_imagen)
         canvas.place(x=633, y=495)
-
+        canvas.config(cursor="hand2")
         # VALIDACIÓN EN LA BASE DE DATOS
-        # canvas.bind("<Button-1>", lambda v: )
+        if tipouser == "No. Control:":
+            canvas.bind("<Button-1>", lambda e: self._registrar_alumno())
+        elif tipouser == "Usuario:":
+            canvas.bind("<Button-1>", lambda e: self._registrar_profesor())
 
         # CÓDIGO TEMPORAL
         # Te deja entrar no importa lo que ingreses.
@@ -768,8 +797,32 @@ class Registro(tk.Frame):
         self.c = c
         c.show_frame(Main)
 
+    def _registrar_alumno(self):
+        alumno = {
+            "no_control": entrada_usuario_registro.get(),
+            "nip": entrada_nip_registro.get(),
+            "nombre": entrada_nombre_registro.get(),
+        }
+        conexion = pymongo.MongoClient('localhost', 27017)
+        mydb = conexion["escuela"]
+        coleccionAlumno = mydb["alumno"]
+        coleccionAlumno.insert_one(alumno)
+
+    def _registrar_profesor(self):
+        profesor = {
+            "usuario": entrada_usuario_registro.get(),
+            "nip": entrada_nip_registro.get(),
+            "nombre": entrada_nombre_registro.get(),
+            "materias": []
+        }
+        conexion = pymongo.MongoClient('localhost', 27017)
+        mydb = conexion["escuela"]
+        coleccionProfesor = mydb["profesor"]
+        coleccionProfesor.insert_one(profesor)
+
 
 class DatosAlumnos(tk.Frame):
+
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -777,7 +830,7 @@ class DatosAlumnos(tk.Frame):
         # Cabecera
         self.__imagen_tecnm(controller)
         self.__label_sii(controller)
-        self.__datos_alumno__(controller)
+        self.__datos_alumno__("1", "test")
         self.__cabecera_tabla__()
         self.__datos_tabla__(controller)
         self.__boton_registrar_materia__(controller)
@@ -820,7 +873,7 @@ class DatosAlumnos(tk.Frame):
         texto.config(height=1, width=31)
         texto.place(x=588, y=37)
 
-    def __datos_alumno__(self, controller):
+    def __datos_alumno__(self, nControl, nombreAlumno):
         """
         Los datos traidos de MongoDB desplegados en forma de texto.
         :param controller: El controlador de la ventana.
@@ -832,17 +885,12 @@ class DatosAlumnos(tk.Frame):
                                  bg=ProgramConstants.BLANCO)
         cal_parciales.place(x=547, y=104)
         # INICIO DE CODIGO TEMPORAL, POR MODIFICAR.
-        global no_control
-        no_control = "17260628"
-        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + no_control,
+        no_control_label = tk.Label(self, height=1, width=24, text="No. De Control: " + nControl,
                                     fg=ProgramConstants.AZUL_MARINO,
                                     font=ProgramConstants.FUENTE_NEGRITAS_18,
                                     bg=ProgramConstants.BLANCO)
         no_control_label.place(x=547, y=138)
-
-        global nombre
-        nombre = "Víctor Hugo Vázquez Gómez"
-        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombre,
+        nombre_label = tk.Label(self, height=1, width=33, text="Nombre: " + nombreAlumno,
                                 fg=ProgramConstants.AZUL_MARINO,
                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
                                 bg=ProgramConstants.BLANCO)
@@ -1289,9 +1337,9 @@ class RegistroMateriaAlumno(tk.Frame):
         :return: Los datos del alumno.
         """
         esc_materia = tk.Label(self, height=1, width=18, text="Escoge una materia",
-                                 fg=ProgramConstants.AZUL_MARINO,
-                                 font=ProgramConstants.FUENTE_NEGRITAS_18,
-                                 bg=ProgramConstants.BLANCO)
+                               fg=ProgramConstants.AZUL_MARINO,
+                               font=ProgramConstants.FUENTE_NEGRITAS_18,
+                               bg=ProgramConstants.BLANCO)
         esc_materia.place(x=534, y=104)
         # INICIO DE CODIGO TEMPORAL, POR MODIFICAR.
         global no_control2

@@ -1,6 +1,5 @@
 # coding: utf-8
 from frontend.root import *
-from Tkinter import *
 
 if __name__ == '__main__':
 

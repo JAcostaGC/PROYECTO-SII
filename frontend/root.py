@@ -2,7 +2,7 @@
 
 import Tkinter as tk
 from program_constants import *
-from iniciosesion.main import Main, Registro, DatosAlumnos, DatosProfesor, \
+from frontend.main import Main, Registro, DatosAlumnos, DatosProfesor, \
     RegistroMateriaAlumno, RegistroMateriaProfesor
 
 
@@ -11,7 +11,6 @@ class Root(tk.Tk):
     """
     Proporciona una ventana raiz acondicionada y reutilizable
     """
-
     def __init__(self, icono="", *args, **kwargs):
         tk.Tk.__init__(self, *args, **kwargs)
 
