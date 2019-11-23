@@ -14,10 +14,10 @@
 ![Ventana Datos Alumno](https://i.imgur.com/6GxzVjg.png)
 
 ### **4. Ventana de registro de materias para los alumnos.**
-![Ventana registro materias](https://imgur.com/7Aj10D3)
+![Ventana registro materias](https://imgur.com/7Aj10D3.png)
 
 ### **5. Ventana principal de los profesores.**
-![Ventana principal Profesores](https://imgur.com/t9cDuwn)
+![Ventana principal Profesores](https://imgur.com/t9cDuwn.png)
 
 ### **6. Ventana para que los profesores registren materias.**
-![Ventana registro materias](https://imgur.com/usQ5EkM)
+![Ventana registro materias](https://i.imgur.com/usQ5EkM.png)
