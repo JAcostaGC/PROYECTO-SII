@@ -15,7 +15,7 @@ class Main(tk.Frame):
         self.__label_sii()
         self._escudo()
         self.__cuadro_sesion(controller)
-        self._cajas_texto_(parent, controller, "No. Control:")
+        self._cajas_texto_(controller, "No. Control:")
         self._cuadro_registro()
         self.__texto__(controller)
 
@@ -166,7 +166,7 @@ class Main(tk.Frame):
 
         self._cajas_texto_(controller, resultado)
 
-    def _cajas_texto_(self, parent, controller, tipouser):
+    def _cajas_texto_(self, controller, tipouser):
         """
         Las cajas de texto personalizadas para que se ingrese usuario
         y contraseña
@@ -239,7 +239,7 @@ class Main(tk.Frame):
             width=34  # La cantidad de caracteres que se pueden visualizar en la caja de texto.
         )
 
-        self.boton_sesion(parent, controller, tipouser)
+        self.boton_sesion(controller, tipouser)
 
     def validate(self, char):
         if tipo_usuario == "No. Control:":
@@ -270,7 +270,7 @@ class Main(tk.Frame):
             entrada_usuario.set(t)
             nip_sesion.config(show="▪")
 
-    def boton_sesion(self, parent, controller, usuario):
+    def boton_sesion(self, controller, usuario):
         """
         Coloca el botón de inicio de sesión
         :return: El botón para iniciar sesión
@@ -301,7 +301,7 @@ class Main(tk.Frame):
         # VALIDACIÓN EN LA BASE DE DATOS
         # canvas.bind("<Button-1>", lambda v: )
         if usuario == "No. Control:":
-            canvas.bind("<Button-1>", lambda e, c=controller: self._verificar_alumno(parent, c))
+            canvas.bind("<Button-1>", lambda e, c=controller: self._verificar_alumno(c))
         elif usuario == "Usuario:":
             canvas.bind("<Button-1>", lambda e, c=controller: self._verificar_profesor(c))
         # CÓDIGO TEMPORAL
@@ -367,15 +367,15 @@ class Main(tk.Frame):
         self.c = c
         c.show_frame(DatosProfesor)
 
-    def _verificar_alumno(self, parent, controller):
+    def _verificar_alumno(self, controller):
         conexion = pymongo.MongoClient('localhost', 27017)
         mydb = conexion["escuela"]
         coleccionAlumno = mydb["alumno"]
         for x in coleccionAlumno.find({}, {"no_control": entrada_usuario.get(), "nip": entrada_nip.get()}):
             if x["no_control"] == entrada_usuario.get() and x["nip"] == entrada_nip.get():
                 self.__boton_sesion_alumno__(controller)
-                dAlumnos = DatosAlumnos(parent, controller)
-                dAlumnos.__datos_alumno__(x["no_control"], x["nip"])
+                # dAlumnos = DatosAlumnos( controller)
+                # dAlumnos.__datos_alumno__(x["no_control"], x["nip"])
             else:
                 tkm.showerror("Usuario o contraseña incorrecta", "Ingresaste mal la contraseña o usuario")
 
@@ -822,6 +822,7 @@ class Registro(tk.Frame):
 
 
 class DatosAlumnos(tk.Frame):
+    i = 0
 
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

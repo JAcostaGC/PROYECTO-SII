@@ -27,14 +27,14 @@ class Root(tk.Tk):
             print 'Icono no encontrado'
 
         # Contenedores
-        contenedor = tk.Frame(self)
-        contenedor.config(height=700, width=1366)
-        contenedor.pack(fill="both", expand=True)
+        self.contenedor = tk.Frame(self)
+        self.contenedor.config(height=700, width=1366)
+        self.contenedor.pack(fill="both", expand=True)
 
         self.frames = {}
         for F in (Main, Registro, DatosAlumnos, DatosProfesor,
                   RegistroMateriaAlumno, RegistroMateriaProfesor):
-            frame = F(parent=contenedor, controller=self)
+            frame = F(parent=self.contenedor, controller=self)
             self.frames[F] = frame
 
             # put all of the pages in the same location;
